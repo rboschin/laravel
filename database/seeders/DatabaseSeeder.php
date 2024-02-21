@@ -12,11 +12,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+      $this->call([
+          SuperAdminSeeder::class,
+      ]);
         // \App\Models\User::factory(10)->create();
-
+        // $tenant_id = Str::uuid();
+        //
         // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
+        //     'name' => 'Super Admin',
+        //     'email' => 'superadmin@mycompany.com',
+        //     'username' => 'superadmin',
+        //     'password' => Hash::make('secret'),
+        //     'tenant_id' => $tenant_id;
         // ]);
+
+
     }
 }

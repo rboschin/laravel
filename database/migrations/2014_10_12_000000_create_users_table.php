@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('tenant_id');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
