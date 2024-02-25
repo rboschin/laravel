@@ -14,18 +14,49 @@ class SuperAdminSeeder extends Seeder
     public function run(): void
     {
       $tenant_id = Str::uuid();
-
       \App\Models\User::factory()->create([
-          'name' => 'Super Admin',
-          'email' => 'superadmin@mycompany.com',
-          'username' => 'superadmin',
-          'password' => \Hash::make('superadmin'),
-          'tenant_id' => $tenant_id,
+        'name' => 'Super Admin',
+        'email' => 'superadmin@mycompany.com',
+        'username' => 'superadmin',
+        'password' => \Hash::make('superadmin'),
+        'tenant_id' => $tenant_id,
+      ]);
+      \App\Models\Tenant::factory()->create([
+        'id' => $tenant_id,
+        'name' => 'Super Administration',
+        'code' => 'superadmin',
       ]);
 
-      \App\Models\Tenant::factory()->create([
+        $tenant_id = Str::uuid();
+        \App\Models\User::factory()->create([
+          'name' => 'Super Admin Stancl',
+          'email' => 'stancl@mycompany.com',
+          'username' => 'superstancl',
+          'password' => \Hash::make('superstancl'),
+          'tenant_id' => $tenant_id,
+        ]);
+        \App\Models\Tenant::factory()->create([
           'id' => $tenant_id,
-          'name' => 'Super Company',
-      ]);
+          'name' => 'Super Stancl',
+          'code' => 'stancl',
+          'method' => 'subdomain',
+          'method_value' => 'stancl'
+        ]);
+
+        $tenant_id = Str::uuid();
+        \App\Models\User::factory()->create([
+          'name' => 'Super Admin Laravel',
+          'email' => 'laravel@mycompany.com',
+          'username' => 'superlaravel',
+          'password' => \Hash::make('laravel'),
+          'tenant_id' => $tenant_id,
+        ]);
+        \App\Models\Tenant::factory()->create([
+          'id' => $tenant_id,
+          'name' => 'Super Laravel',
+          'code' => 'laravel',
+          'method' => 'domain',
+          'method_value' => 'laravel.ok40.it'
+        ]);
     }
 }

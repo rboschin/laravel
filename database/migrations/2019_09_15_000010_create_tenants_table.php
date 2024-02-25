@@ -19,8 +19,10 @@ class CreateTenantsTable extends Migration
             $table->string('id')->primary();
             $table->string('method')->nullable();
             $table->string('method_value')->nullable();
+            $table->string('code')->unique();
             $table->string('name')->unique();
             $table->string('logo_path')->nullable();
+            $table->string('theme')->default('standard');
 
             $table->json('data')->nullable();
             $table->timestamps();

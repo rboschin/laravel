@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\Tenant;
 
 class LoginRequest extends FormRequest
 {
@@ -29,6 +30,7 @@ class LoginRequest extends FormRequest
         return [
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
+            'tenant' => ! session('current_tenant_id') ? ['required', 'string'] : ['string'],
         ];
     }
 
@@ -40,13 +42,17 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+// dd($this->request);
+        // Puts tenant id into session
+        $this->getTenantFromCode();
 
-        if (! Auth::attempt($this->only('username', 'password'), $this->boolean('remember'))) {
+        if (! Auth::attempt($this->only('username', 'password', 'tenant_id'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'username' => trans('auth.failed'),
             ]);
+
         }
 
         RateLimiter::clear($this->throttleKey());
@@ -82,4 +88,25 @@ class LoginRequest extends FormRequest
     {
         return Str::transliterate(Str::lower($this->input('username')).'|'.$this->ip());
     }
+
+    /**
+    * Login requires a tenant in $request so
+    * sets tenant if in session, else looks in db
+    */
+    public function getTenantFromCode(): void
+    {
+        if (session('current_tenant_id')) {
+            $this->request->set('tenant_id', session('current_tenant_id'));
+        } else {
+            $tenant = Tenant::whereCode($this->tenant)->first();
+            if (! is_null($tenant)) {
+                $this->request->set('tenant_id', $tenant->id);
+(new \App\Http\Middleware\SetTenantFromRequest)->setTenantSession($tenant);
+            } else {
+                // Not existant
+                $this->request->set('tenant_id', $this->tenant);
+            }
+        }
+    }
+
 }

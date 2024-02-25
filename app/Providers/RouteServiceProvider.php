@@ -19,21 +19,26 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/dashboard';
 
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
     public function boot(): void
     {
+// dump (session()->all());
+        // dd($_SESSION);
+        // $this->HOME = '/superadmin/dashboard';
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
-
-        $this->routes(function () {
+        $this->routes(function (Request $request) {
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
-
+// dd($this->tenant_code);
+// dd(request()->session()->all());
             Route::middleware('web')
+                // ->prefix('superadmin')
                 ->group(base_path('routes/web.php'));
         });
     }

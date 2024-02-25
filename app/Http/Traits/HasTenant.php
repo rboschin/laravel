@@ -1,30 +1,17 @@
 <?php
+namespace App\Http\Traits;
 
-namespace App\Http\Middleware;
-
-use Closure;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-// use Symfony\Component\HttpFoundation\Response;
 
-/**
-* Recognizes the tenant from the request url and sets its id into session.
-* Continues even if no tenant found
-*/
-class SetTenantFromRequest
-{
-    /**
-    * Handle an incoming request.
-    *
-    * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-    */
-    public function handle(Request $request, Closure $next)
+
+trait HasTenant {
+
+    public function getTenantFromRequest(Request $request)
     {
-// dd($request->session()->get('current_tenant_url'));
         // Let's see if already checked
         if (! empty($request->session()->get('current_tenant_url')) && str_contains(url()->current(), $request->session()->get('current_tenant_url'))) {
-            return $next($request);
+            return false;
         }
         // Just one query
         $tenants = Tenant::select(['id', 'method', 'method_value', 'name', 'logo_path'])->get();
@@ -58,7 +45,7 @@ class SetTenantFromRequest
         }
 
 
-        return $next($request);
+        return $tenant;
     }
 
 

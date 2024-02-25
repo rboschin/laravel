@@ -9,14 +9,19 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Http\Traits\HasTenant;
 
 class AuthenticatedSessionController extends Controller
 {
+    use HasTenant;
+
     /**
      * Display the login view.
      */
     public function create(): View
     {
+        $tenant = $this->getTenantFromRequest(request());
+
         return view('auth.login');
     }
 
@@ -28,6 +33,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
@@ -44,5 +50,15 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    protected function setUserSession($request)
+    {
+        session(
+            [
+                'last_invoiced_at' => 'mai',
+                'total_amount_due' => 'tanto'
+            ]
+        );
     }
 }

@@ -31,6 +31,20 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
+        <!-- Tenant -->
+        @if (! session('current_tenant_id'))
+            <div class="mt-4">
+                <x-input-label for="tenant" :value="__('Tenant Code')" />
+
+                <x-text-input id="tenant" class="block mt-1 w-full"
+                                type="text"
+                                name="tenant"
+                                required autocomplete="current-tenant" />
+
+                <x-input-error :messages="$errors->get('tenant')" class="mt-2" />
+            </div>
+        @endif
+
         <!-- Remember Me -->
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
